@@ -1,14 +1,16 @@
 import React from "react";
 import Styled from "styled-components";
-const Col = Styled.div`
-  box-sizing: border-box;
-  float: left;
-  background: #eee;
-  border-right: 1px solid #fff;
-  border-bottom: 1px solid #fff;
-  overflow: hidden;
-  height: 10px;
 
+const Wrap = Styled.div`
+  > div div {
+    box-sizing: border-box;
+    float: left;
+    background: #eee;
+    border-right: 1px solid #fff;
+    border-bottom: 1px solid #fff;
+    overflow: hidden;
+    height: 10px;
+  }
 `;
 
 export default ({ row, col, on = {} }) => {
@@ -18,25 +20,19 @@ export default ({ row, col, on = {} }) => {
 
   const Rows = new Array(row).fill(0);
   const Cols = new Array(col).fill(0);
-  const onEvents = (x, y) => {
-    const ret = {};
-    Object.keys(on).forEach(event => {
-      ret[event] = evt => on[event](evt, x, y);
-    });
-    return ret;
-  };
+
   // console.log(onEvents);
   return (
-    <div ref={base}>
+    <Wrap ref={base} {...on}>
       {Rows.map((x, i) => {
         return (
           <div key={i}>
             {Cols.map((x, j) => {
-              return <Col {...onEvents(i, j)} key={j} style={{ width }} />;
+              return <div data-x={i} data-y={j} key={j} style={{ width }} />;
             })}
           </div>
         );
       })}
-    </div>
+    </Wrap>
   );
 };
