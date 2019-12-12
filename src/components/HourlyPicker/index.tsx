@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Dom from "./dom";
+import Map from "./map";
 
 const useTimeSplit = () => {
   return {
@@ -13,19 +14,25 @@ interface Pos {
   y: any;
 }
 
-const useStore = () => {
-  // const [key, setKey] = useState(false);
+const useMap = () => {
+  const [map] = useState(new Map());
   // const [startPos, setStartPos] = useState([0, 0]);
   // const [endPos, setEndPos] = useState([0, 0]);
   // console.log(1, startPos, endPos);
+  useEffect(() => {
+
+  })
 
   return {
-    start({ x = 0, y = 0 } = {}) {
-      console.log(x, y);
+    start(pos:Pos = {}) {
+      map.start(pos)
+
       // setKey(true);
       // setStartPos([x, y]);
     },
-    end(x, y) {
+    end(pos:Pos = {}) {
+      console.log(map.end(pos))
+
       // if (key) {
       // setKey(false);
       // setEndPos([x, y]);
@@ -46,7 +53,7 @@ const getPos = (target: HTMLElement): Pos => ({
 
 export default () => {
   const { row, col } = useTimeSplit();
-  const { start, end, move } = useStore();
+  const { start, end, move } = useMap();
 
   const on = {
     onMouseDown(evt: any) {
@@ -55,8 +62,8 @@ export default () => {
     onMouseMove(evt, x, y) {
       move(x, y);
     },
-    onMouseUp(evt, x, y) {
-      end(x, y);
+    onMouseUp(evt: any) {
+      end(getPos(evt.target));
     }
   };
   return (
