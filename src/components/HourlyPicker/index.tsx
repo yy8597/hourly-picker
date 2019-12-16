@@ -1,21 +1,22 @@
-import React, { useEffect, useState } from "react";
+import * as React from "react";
+import { useEffect, useState } from "react";
 import Dom from "./dom";
 import Map from "./map";
 
 const useTimeSplit = () => {
   return {
-    row: 7,
-    col: 24
+    row: 24,
+    col: 7
   };
 };
 
 interface Pos {
-  x: any;
-  y: any;
+  x?: any;
+  y?: any;
 }
 
-const useMap = () => {
-  const [map] = useState(new Map());
+const useMap = (row:number, col:number) => {
+  const [map] = useState(new Map<boolean>(row, col));
   // const [startPos, setStartPos] = useState([0, 0]);
   // const [endPos, setEndPos] = useState([0, 0]);
   // console.log(1, startPos, endPos);
@@ -25,7 +26,7 @@ const useMap = () => {
 
   return {
     start(pos:Pos = {}) {
-      map.start(pos)
+      console.log(map.start(pos))
 
       // setKey(true);
       // setStartPos([x, y]);
@@ -53,7 +54,7 @@ const getPos = (target: HTMLElement): Pos => ({
 
 export default () => {
   const { row, col } = useTimeSplit();
-  const { start, end, move } = useMap();
+  const { start, end, move } = useMap(row, col);
 
   const on = {
     onMouseDown(evt: any) {
