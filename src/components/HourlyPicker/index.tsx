@@ -11,12 +11,14 @@ const useTimeSplit = () => {
 };
 
 interface Pos {
-  x?: any;
-  y?: any;
+  x?: Number;
+  y?: Number;
 }
 
 const useMap = (row:number, col:number) => {
   const [map] = useState(new Map<boolean>(row, col));
+  const [data, setData] = useState([]);
+  const [onMouseDown, setOnMouseDown] = useState(false);
   // const [startPos, setStartPos] = useState([0, 0]);
   // const [endPos, setEndPos] = useState([0, 0]);
   // console.log(1, startPos, endPos);
@@ -26,42 +28,46 @@ const useMap = (row:number, col:number) => {
 
   return {
     start(pos:Pos = {}) {
-      console.log(map.start(pos))
-
+      const newData = map.start(pos)
+      if(newData) {
+        setData(newData)
+      }
+      setOnMouseDown(true)
       // setKey(true);
       // setStartPos([x, y]);
     },
     end(pos:Pos = {}) {
-      console.log(map.end(pos))
-
-      // if (key) {
-      // setKey(false);
-      // setEndPos([x, y]);
-      // }
+      setOnMouseDown(false)
+      map.end(pos)
     },
-    move(x, y) {
-      // if (key && (x !== endPos[0] || y !== endPos[1])) {
-      //   setEndPos([x, y]);
-      // }
-    }
+    move(pos:Pos = {}) {
+      if(onMouseDown) {
+        const newData = map.move(pos)
+        if(newData) {
+          setData(newData)
+        }
+        
+      }
+    },
+    data
   };
 };
 
 const getPos = (target: HTMLElement): Pos => ({
-  x: target.getAttribute("data-x"),
-  y: target.getAttribute("data-y")
+  x: Number(target.getAttribute("data-x")),
+  y: Number(target.getAttribute("data-y"))
 });
 
 export default () => {
   const { row, col } = useTimeSplit();
-  const { start, end, move } = useMap(row, col);
+  const { start, end, move, data } = useMap(row, col);
 
   const on = {
     onMouseDown(evt: any) {
       start(getPos(evt.target));
     },
-    onMouseMove(evt, x, y) {
-      move(x, y);
+    onMouseMove(evt: any) {
+      move(getPos(evt.target));
     },
     onMouseUp(evt: any) {
       end(getPos(evt.target));
@@ -69,7 +75,7 @@ export default () => {
   };
   return (
     <div>
-      <Dom row={row} col={col} on={on} />
+      <Dom row={row} col={col} on={on} data={data} />
     </div>
   );
 };

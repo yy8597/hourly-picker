@@ -1,8 +1,8 @@
 import {Array2D} from './Array2D'
 
 interface Pos {
-  x?: any;
-  y?: any;
+  x?: Number;
+  y?: Number;
 }
 
 interface PosMove {
@@ -22,7 +22,6 @@ export default class Map<Type> {
 
   constructor(row:number, col:number) {
     this.array2D = new Array2D<Type>(row, col);
-    // console.log(this.map)
   }
 
   /**
@@ -30,27 +29,52 @@ export default class Map<Type> {
    * @method start
    * @for Map
    * @param {Pos} pos 起始点
-   * @return {PosMove} 起始点和终点
+   * @return {Array2D<Type>} 起始点和终点
    */
-  start(pos: Pos) :PosMove{
-    this.startPosition = {
-      x: pos.x,
-      y: pos.y
+  start(pos: Pos) :Array2D<Type>{
+    const startPos = this.startPosition = {
+      x: Number(pos.x),
+      y: Number(pos.y)
     }
 
-    return {
-      start: this.startPosition,
-      end: null
+    const endPos = this.endPosition = {
+      x: Number(pos.x),
+      y: Number(pos.y)
     }
+
+    const view = this.array2D.choose(startPos.x, startPos.y, endPos.x, endPos.y)
+    return view
+  }
+
+  /**
+   * @method move
+   * @for Map
+   * @param {Pos} pos 终点
+   * @return {Array2D<Type>} 起始点和终点
+   */
+  move(pos: Pos) :Array2D<Type>{
+    if(Number(pos.x) === this.endPosition.x && Number(pos.y) === this.endPosition.y){
+      return
+    }
+    this.endPosition = {
+      x: Number(pos.x),
+      y: Number(pos.y)
+    }
+
+    const startPos = this.startPosition
+    const endPos = this.endPosition
+
+    const view = this.array2D.choose(startPos.x, startPos.y, endPos.x, endPos.y)
+    return view
   }
 
   /**
    * @method end
    * @for Map
    * @param {Pos} pos 终点
-   * @return {PosMove} 起始点和终点
+   * @return {Array2D<Type>} 起始点和终点
    */
-  end(pos: Pos) :PosMove{
+  end(pos: Pos) :Array2D<Type>{
     const startPos = this.startPosition
     const endPos:Pos = {
       x: pos.x,
@@ -58,10 +82,11 @@ export default class Map<Type> {
     }
 
     this.startPosition = null
+    this.endPosition = null
 
-    return {
-      start: startPos,
-      end: endPos
-    }
+    const view = this.array2D.choose(startPos.x, startPos.y, endPos.x, endPos.y)
+    this.array2D.save(view)
+
+    return view
   }
 }

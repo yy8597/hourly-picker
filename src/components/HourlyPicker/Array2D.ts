@@ -12,11 +12,11 @@ export class Array2D<Type> {
       }
   }
 
-  get(r: number, c : number) :Type{
+  get(r: number, c: number) :Type{
       return this.grid[r][c];
   }
 
-  set(r: number, c : number, x : Type) :void{
+  set(r: number, c: number, x : Type) :void{
       this.grid[r][c] = x;
   }
 
@@ -25,5 +25,37 @@ export class Array2D<Type> {
   }
   setAt(pt : Array<number>, x:Type) :void{
       this.set(pt[0], pt[1], x);
+  }
+
+  copy() :Array<Array<Type>>{
+    const grid = [];
+    this.grid.forEach(r => {
+        grid.push(r.slice());
+    })
+    return grid;
+  }
+
+  choose(r: number, c: number, r1: number, c1: number) :Array<Array<Type>>{
+    const toVal = !this.get(r, c);
+    const grid = this.copy();
+    if(r1 <= r) {
+        [r, r1] = [r1, r]
+    }
+    if(c1 <= c) {
+        [c, c1] = [c1, c]
+    }
+
+    for(let i = r; i <= r1; i++) {
+        for(let j = c; j <= c1; j++) {
+            grid[i][j] = toVal;
+        }
+    }
+
+    return grid;
+  }
+
+  save(array: Array<Array<Type>>) {
+      //细化，目前不安全
+      this.grid = array
   }
 };
